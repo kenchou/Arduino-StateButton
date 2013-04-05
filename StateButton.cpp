@@ -5,7 +5,7 @@ StateButton::StateButton(int buttonPin, int buttonPinMode /*= INPUT*/)
 	pin = buttonPin;
 	lastState = buttonPinMode == INPUT_PULLUP ? HIGH : LOW;
 	pushCount=0;
-	setPressedValue();
+	setPressedValue(buttonPinMode == INPUT_PULLUP ? LOW : HIGH);
 	pinMode(buttonPin, buttonPinMode);
 }
 
@@ -32,14 +32,8 @@ int StateButton::readState()
 {
 	int reading = digitalRead(pin);
 	if (reading != lastState) {  //state changed
-		lastDebounceTime = millis();
-		
-		//debounce
-		if ((millis() - lastDebounceTime) > debounceDelay) {
-			// whatever the reading is at, it's been there for longer
-			// than the debounce delay, so take it as the actual current state:
+		if (reading == pressed) { //pressed
 			++pushCount;
-			lastState = reading;
 //#ifdef DEBUG
 			Serial.print("Change state:");
 			Serial.print(reading, DEC);
@@ -47,11 +41,12 @@ int StateButton::readState()
 			Serial.print(pushCount, DEC);
 			Serial.print(", change:");
 			Serial.println(pushCount % 4, DEC);
-//#endif
 		}
+//#endif
 	}
+	lastState = reading;
 
-	return (0 == pushCount % 4) ? pressed : !pressed; //change state
+	return (0 == pushCount % 2) ? pressed : !pressed; //change state
 }
 
 bool StateButton::isPressed()

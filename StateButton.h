@@ -23,6 +23,8 @@ class StateButton
 		
 		bool isPressed();
 		bool isReleased();
+		
+		
 };
 
 #endif
