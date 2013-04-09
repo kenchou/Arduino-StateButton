@@ -33,7 +33,7 @@ int StateButton::readState()
 	int reading = digitalRead(pin);
 	if (reading != lastState) {  //state changed
 		if (reading == pressed) { //pressed
-			++pushCount;
+			pushCount = !pushCount;
 //#ifdef DEBUG
 			Serial.print("Change state:");
 			Serial.print(reading, DEC);
@@ -46,7 +46,7 @@ int StateButton::readState()
 	}
 	lastState = reading;
 
-	return (0 == pushCount % 2) ? pressed : !pressed; //change state
+	return (0 == pushCount) ? pressed : !pressed; //change state
 }
 
 bool StateButton::isPressed()
